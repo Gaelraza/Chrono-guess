@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronos Guess - Historical Figure Quiz</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{
+  "imports": {
+    "vite": "https://aistudiocdn.com/vite@^7.2.2",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "canvas-confetti": "https://aistudiocdn.com/canvas-confetti@^1.9.4",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+  }
+}
+</script>
+</head>
+<body>
+
+    <div id="app">
+        
+        <!-- ================= HEADER ================= -->
+        <header id="game-header" class="hidden">
+            <div class="header-content">
+                <div class="brand">
+                    <div class="icon-box"><i class="fa-solid fa-hourglass-half"></i></div>
+                    <div class="title-text">
+                        <h1>Chronos</h1>
+                        <p>Guess the Historical Figure</p>
+                    </div>
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat-item mobile-hide">
+                        <label>Difficulty</label>
+                        <span id="display-difficulty">Medium</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>Round</label>
+                        <span id="display-round">1 / 5</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="stat-item">
+                        <label>Score</label>
+                        <div class="score-box">
+                            <i class="fa-solid fa-award"></i>
+                            <span id="display-score">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-item mobile-hide" id="streak-container" style="display: none;">
+                        <label>Streak</label>
+                        <div class="streak-box">
+                            <i class="fa-solid fa-fire"></i>
+                            <span id="display-streak">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================= START MENU ================= -->
+        <section id="start-menu" class="screen active">
+            <div class="menu-card">
+                <div class="menu-header">
+                    <div class="icon-box large"><i class="fa-solid fa-hourglass-half"></i></div>
+                    <h1>Chronos Guess</h1>
+                    <p>Test your knowledge of history</p>
+                </div>
+
+                <form id="setup-form">
+                    <!-- Region Selection -->
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-globe"></i> Select Region</label>
+                        <div class="grid-2">
+                            <button type="button" class="option-btn region-btn selected" data-value="Worldwide">Worldwide</button>
+                            <button type="button" class="option-btn region-btn" data-value="Europe">Europe</button>
+                            <button type="button" class="option-btn region-btn" data-value="Asia">Asia</button>
+                            <button type="button" class="option-btn region-btn" data-value="Africa">Africa</button>
+                            <button type="button" class="option-btn region-btn" data-value="North America">N. America</button>
+                            <button type="button" class="option-btn region-btn" data-value="South America">S. America</button>
+                            <button type="button" class="option-btn region-btn" data-value="Oceania">Oceania</button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Difficulty Selection -->
+                    <div class="form-group">
+                        <label>Select Difficulty</label>
+                        <div class="grid-3">
+                            <button type="button" class="option-btn diff-btn" data-value="easy">Easy</button>
+                            <button type="button" class="option-btn diff-btn selected" data-value="medium">Medium</button>
+                            <button type="button" class="option-btn diff-btn" data-value="hard">Hard</button>
+                        </div>
+                        <p class="info-text" id="difficulty-info">Hints appear after 1 wrong guess</p>
+                    </div>
+
+                    <!-- Round Selection -->
+                    <div class="form-group">
+                        <label>Number of Rounds</label>
+                        <div class="grid-3">
+                            <button type="button" class="option-btn rounds-btn selected" data-value="5">5</button>
+                            <button type="button" class="option-btn rounds-btn" data-value="10">10</button>
+                            <button type="button" class="option-btn rounds-btn" data-value="15">15</button>
+                        </div>
+                    </div>
+
+                    <!-- Notice -->
+                    <div class="notice-box">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <p><strong>Language Note:</strong> Please submit answers in <strong>English</strong> (e.g., "Christopher Columbus").</p>
+                    </div>
+
+                    <button type="submit" class="primary-btn full-width">
+                        <i class="fa-solid fa-play"></i> Start Game
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= GAMEPLAY ================= -->
+        <section id="game-screen" class="screen hidden">
+            <div class="game-container">
+                
+                <div id="feedback-area" class="feedback-area">
+                    <p id="feedback-text"></p>
+                    <p id="continent-hint" class="hidden"><i class="fa-solid fa-globe"></i> <span id="continent-name"></span></p>
+                </div>
+
+                <div id="clues-container">
+                    <!-- Facts injected via JS -->
+                </div>
+
+                <div id="hint-box" class="hint-box hidden">
+                    <p><i class="fa-solid fa-wand-magic-sparkles"></i> <strong>Hint:</strong> <span id="hint-text"></span></p>
+                </div>
+
+                <div class="game-controls">
+                    <button id="btn-reveal-clue" class="secondary-btn">
+                        <i class="fa-regular fa-lightbulb"></i> Need another clue? (-Pts)
+                    </button>
+                    <button id="btn-get-hint" class="outline-btn">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Get Hint
+                    </button>
+                </div>
+            </div>
+
+            <footer class="game-footer">
+                <div class="footer-content">
+                    <div id="input-area">
+                        <form id="guess-form">
+                            <input type="text" id="user-input" placeholder="Type the name (or surname)..." autocomplete="off">
+                            <button type="submit" class="primary-btn">Guess</button>
+                        </form>
+                        <div class="sub-actions">
+                            <span id="clues-remaining-text">2 clues hidden</span>
+                            <button type="button" id="btn-give-up" class="text-btn">I Give Up</button>
+                        </div>
+                    </div>
+
+                    <div id="next-round-area" class="hidden">
+                        <div class="result-message" id="round-result-msg"></div>
+                        <button id="btn-next-round" class="primary-btn">
+                            <i class="fa-solid fa-forward"></i> Next Round
+                        </button>
+                    </div>
+                </div>
+            </footer>
+        </section>
+
+        <!-- ================= GAME OVER ================= -->
+        <section id="game-over-screen" class="screen hidden">
+            <div class="result-card">
+                <div class="icon-box large"><i class="fa-solid fa-trophy"></i></div>
+                <h2>Game Over</h2>
+                <p>You've completed all rounds!</p>
+
+                <div class="final-stats">
+                    <div class="stat-block border-right">
+                        <label>Final Score</label>
+                        <span id="final-score" class="highlight">0</span>
+                    </div>
+                    <div class="stat-block">
+                        <label>Max Possible</label>
+                        <span id="max-score">500</span>
+                    </div>
+                </div>
+
+                <p id="final-message" class="final-msg">Great job!</p>
+
+                <button id="btn-restart" class="primary-btn full-width">
+                    <i class="fa-solid fa-rotate-left"></i> Play Again
+                </button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Game Logic -->
+    <script type="module" src="game.js"></script>
+</body>
+</html>
