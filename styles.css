@@ -1,0 +1,508 @@
+/* ================= VARIABLES & RESET ================= */
+:root {
+    --color-parchment: #f5f5dc;
+    --color-parchment-dark: #e8e8c8;
+    --color-ink: #2c2c2c;
+    --color-gold: #daa520;
+    --color-gold-hover: #b8860b;
+    --color-red: #8b0000;
+    --color-green: #15803d;
+    --color-stone-100: #f5f5f4;
+    --color-stone-200: #e7e5e4;
+    --color-stone-400: #a8a29e;
+    --color-stone-500: #78716c;
+    --color-white: #ffffff;
+    
+    --font-serif: 'Cinzel', serif;
+    --font-sans: 'Lato', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: var(--color-stone-100);
+    background-image: radial-gradient(circle at center, #fff 0%, var(--color-stone-200) 100%);
+    min-height: 100vh;
+    line-height: 1.5;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================= LAYOUT ================= */
+#app {
+    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.screen {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* ================= HEADER ================= */
+#game-header {
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-stone-200);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.header-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.icon-box {
+    background: rgba(218, 165, 32, 0.15);
+    color: var(--color-gold);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.icon-box.large {
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+    margin: 0 auto 1rem auto;
+}
+
+.title-text h1 {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.title-text p {
+    font-size: 0.75rem;
+    color: var(--color-stone-500);
+}
+
+.stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-item label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-stone-400);
+}
+
+.stat-item span {
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.score-box, .streak-box {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.score-box i { color: var(--color-gold); }
+.streak-box i { color: var(--color-red); }
+
+.divider {
+    width: 1px;
+    height: 2rem;
+    background: var(--color-stone-200);
+}
+
+/* ================= MENUS & CARDS ================= */
+.menu-card, .result-card {
+    background: var(--color-white);
+    width: 100%;
+    max-width: 480px;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    border-top: 4px solid var(--color-gold);
+    margin-top: 2rem;
+    animation: slideUp 0.5s ease-out;
+}
+
+.menu-header, .result-card {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.menu-header h1, .result-card h2 {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-stone-400);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+
+.option-btn {
+    background: var(--color-stone-100);
+    border: none;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    color: var(--color-stone-500);
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-btn:hover { background: var(--color-stone-200); }
+
+.option-btn.selected {
+    background: var(--color-ink);
+    color: var(--color-white);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.region-btn.selected, .diff-btn.selected {
+    background: var(--color-gold);
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--color-stone-100);
+    margin: 1rem 0;
+}
+
+.notice-box {
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: #1e40af;
+    margin-bottom: 1rem;
+}
+
+.info-text {
+    font-size: 0.7rem;
+    color: var(--color-stone-400);
+    text-align: center;
+    margin-top: 0.4rem;
+    min-height: 1rem;
+}
+
+/* ================= BUTTONS ================= */
+.primary-btn, .secondary-btn, .outline-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: none;
+}
+
+.primary-btn {
+    background: var(--color-gold);
+    color: var(--color-ink);
+}
+.primary-btn:hover { background: var(--color-gold-hover); }
+
+.secondary-btn {
+    background: var(--color-stone-200);
+    color: var(--color-ink);
+}
+.secondary-btn:hover { background: #d6d3d1; }
+
+.outline-btn {
+    background: transparent;
+    border: 2px solid var(--color-gold);
+    color: var(--color-gold-hover);
+}
+.outline-btn:hover {
+    background: var(--color-gold);
+    color: var(--color-ink);
+}
+
+.full-width { width: 100%; }
+
+/* ================= GAMEPLAY AREA ================= */
+.game-container {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding-bottom: 140px; /* Space for footer */
+}
+
+.feedback-area {
+    text-align: center;
+    min-height: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+#feedback-text {
+    font-weight: 700;
+    font-size: 1rem;
+}
+.text-success { color: var(--color-green); }
+.text-error { color: var(--color-red); }
+
+#continent-hint {
+    font-size: 0.8rem;
+    color: var(--color-stone-400);
+    margin-top: 0.25rem;
+}
+
+/* Clue Cards */
+.fact-card {
+    background: var(--color-white);
+    border-left: 4px solid var(--color-gold);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 1rem;
+    animation: slideUp 0.4s ease-out;
+}
+
+.fact-icon {
+    background: var(--color-parchment);
+    color: var(--color-gold);
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.fact-content h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--color-stone-500);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+}
+
+.fact-content p {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--color-ink);
+}
+
+.hint-box {
+    background: #fefce8;
+    border: 1px solid #fef08a;
+    color: #854d0e;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    animation: fadeIn 0.5s;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+/* ================= FOOTER INPUT ================= */
+.game-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--color-white);
+    border-top: 1px solid var(--color-stone-200);
+    padding: 1rem;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+    z-index: 90;
+}
+
+.footer-content {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+#guess-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#user-input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-stone-200);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#user-input:focus {
+    border-color: var(--color-gold);
+}
+
+.sub-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    padding: 0 0.25rem;
+}
+
+#clues-remaining-text {
+    font-size: 0.75rem;
+    color: var(--color-stone-400);
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-stone-500);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+}
+.text-btn:hover { color: var(--color-red); }
+
+/* Next Round Area */
+#next-round-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.result-message {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* ================= GAME OVER ================= */
+.final-stats {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.stat-block {
+    padding: 0 1.5rem;
+    text-align: center;
+}
+
+.border-right { border-right: 1px solid var(--color-stone-200); }
+
+.stat-block label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--color-stone-400);
+}
+
+.stat-block span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-stone-300);
+}
+
+.stat-block span.highlight {
+    color: var(--color-gold);
+    font-size: 2rem;
+}
+
+.final-msg {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* ================= ANIMATIONS & UTILS ================= */
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+    .mobile-hide { display: none; }
+    .menu-card { padding: 1.5rem; }
+}
